@@ -44,17 +44,17 @@ namespace DocuPixieDesktopApp
                 string strContent = await response.Content.ReadAsStringAsync();
 
                 // Optionally, deserialize to check the status
-                Rootobject ocrResult = JsonConvert.DeserializeObject<Rootobject>(strContent);
+                Root ocrResult = JsonConvert.DeserializeObject<Root>(strContent);
 
-                if (ocrResult.OCRExitCode == 1)
+                if (ocrResult.ParsedResults != null && ocrResult.ParsedResults.Count > 0)
                 {
-                    // Return the full JSON response as is
-                    return strContent; // This is already a valid JSON response from the OCR API
+                    string parsedText = ocrResult.ParsedResults[0].ParsedText; // Access the parsed text
+                    return parsedText; // Return the parsed text from the first result
                 }
                 else
                 {
-                    // Returning the error message in JSON format
-                    return JsonConvert.SerializeObject(new { error = "OCR failed", details = strContent });
+                    // If no parsed results found, return an error message
+                    return JsonConvert.SerializeObject(new { error = "No text found in the image." });
                 }
             }
             catch (Exception exception)

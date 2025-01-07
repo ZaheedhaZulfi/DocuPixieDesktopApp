@@ -74,15 +74,22 @@ namespace DocuPixieDesktopApp
                     
                     // Step 1: Scan the file (OCR)
                     string scannedText = await extractapi.extractText(filePath);
+
+
                     MessageBox.Show(scannedText);
 
                     if (!string.IsNullOrEmpty(scannedText))
                     {
+
+                        summarizeAPI summarizeAPI =  new summarizeAPI();
+                        Summarize summarizedText = await summarizeAPI.GetSummary(scannedText);
+
+                        MessageBox.Show(summarizedText.summary_text);
                         // Step 2: Summarize the scanned text
-                        string summarizedText = await SummarizeTextWithHuggingFace(scannedText);
+                         //= await SummarizeTextWithHuggingFace(scannedText);
 
                         // Step 3: Show the summarized text in the SummarizedPage form
-                        SummeraizedPage summarizedPage = new SummeraizedPage(summarizedText);
+                        SummeraizedPage summarizedPage = new SummeraizedPage(summarizedText.summary_text);
                         summarizedPage.Show();
                         this.Hide();
                     }
